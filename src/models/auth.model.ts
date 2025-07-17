@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { env } from "../config/config";
@@ -10,6 +10,7 @@ type Avatar = {
 };
 
 export type IUser = {
+  _id: ObjectId;
   avatar: Avatar;
   username: string;
   fullname?: string;
@@ -17,14 +18,23 @@ export type IUser = {
   password: string;
   isEmailVerified?: boolean;
   role: string;
-  emailVerificationLink?: string;
-  emailVerificationExpiry?: Date;
-  forgetPasswordToken?: string;
-  forgetPasswordExpiry?: Date;
+  emailVerificationToken?: string | null;
+  emailVerificationExpiry?: Date | null;
+  forgetPasswordToken?: string | null;
+  forgetPasswordExpiry?: Date | null;
   refreshToken?: string;
 };
 
-const userSchema = new mongoose.Schema<IUser>(
+export interface IUserMethods {
+  isValidPassword(password: string): Promise<boolean>;
+  generatingAccessToken(): string;
+  generatingRefreshToken(): string;
+}
+
+// ! yeh mongoose ke model waale main doubt hai muhje abhi
+export type UserModel = mongoose.Model<IUser, {}, IUserMethods>;
+
+const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>(
   {
     avatar: {
       type: {
@@ -77,7 +87,7 @@ const userSchema = new mongoose.Schema<IUser>(
       default: UserRolesEnum?.USER,
     },
 
-    emailVerificationLink: {
+    emailVerificationToken: {
       type: String,
       trim: true,
     },
@@ -128,4 +138,4 @@ userSchema.methods.generatingRefreshToken = function () {
   });
 };
 
-export const User = mongoose.model<IUser>("User", userSchema);
+export const User = mongoose.model("User", userSchema);

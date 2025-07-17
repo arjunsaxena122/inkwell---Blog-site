@@ -14,6 +14,9 @@ const envSchema = z.object({
   ACCESS_TOKEN_EXPIRY: z.string(),
   REFRESH_TOKEN_KEY: z.string(),
   REFRESH_TOKEN_EXPIRY: z.string(),
+  MAIL_TRAP_HOST: z.string(),
+  MAIL_TRAP_USERNAME: z.string(),
+  MAIL_TRAP_PASSWORD: z.string(),
 });
 
 const createEnv = (env: NodeJS.ProcessEnv) => {
