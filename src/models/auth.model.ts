@@ -2,13 +2,14 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { env } from "../config/config";
+import { AvailableUserRolesEnum, UserRolesEnum } from "../utils/constants";
 
 type Avatar = {
   url: string;
   localPath: string;
 };
 
-type IUser = {
+export type IUser = {
   avatar: Avatar;
   username: string;
   fullname?: string;
@@ -72,8 +73,8 @@ const userSchema = new mongoose.Schema<IUser>(
 
     role: {
       type: String,
-      enum: ["User", "ADMIN"],
-      default: "USER",
+      enum: AvailableUserRolesEnum,
+      default: UserRolesEnum?.USER,
     },
 
     emailVerificationLink: {
@@ -127,4 +128,4 @@ userSchema.methods.generatingRefreshToken = function () {
   });
 };
 
-export const User = mongoose.model("User", userSchema);
+export const User = mongoose.model<IUser>("User", userSchema);

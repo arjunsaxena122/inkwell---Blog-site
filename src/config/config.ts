@@ -10,6 +10,10 @@ const envSchema = z.object({
   PORT: z.string().optional(),
   NODE_ENV: z.string().optional(),
   MONGO_URI: z.string(),
+  ACCESS_TOKEN_KEY: z.string(),
+  ACCESS_TOKEN_EXPIRY: z.string(),
+  REFRESH_TOKEN_KEY: z.string(),
+  REFRESH_TOKEN_EXPIRY: z.string(),
 });
 
 const createEnv = (env: NodeJS.ProcessEnv) => {
