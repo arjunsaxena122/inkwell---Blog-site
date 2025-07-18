@@ -2,22 +2,17 @@ import { NextFunction, Request, Response } from "express";
 import { ApiError } from "../utils/api-error";
 import jwt from "jsonwebtoken";
 import { env } from "../config/config";
-import { IUser, User } from "../models/auth.model";
-
-
-export interface IReq extends Request {
-  user: IUser;
-}
+import { User } from "../models/auth.model";
 
 export const verifyJwt = async (
-  req: IReq,
+  req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const token =
       req?.cookies?.accessToken ||
-      req?.headers["authorization"]?.replace("Bearer", "");
+      req?.headers["authorization"]?.replace("Bearer", "").trim();
 
     if (!token) {
       throw new ApiError(401, "ERROR : Unauthorised access");
@@ -43,6 +38,6 @@ export const verifyJwt = async (
     req.user = user;
     next();
   } catch (err) {
-    throw new ApiError(403, "ERROR: ACCESS DENIED");
+    next(new ApiError(403, "ERROR: ACCESS DENIED"));
   }
 };

@@ -19,8 +19,9 @@ app.use(cookieParser());
 
 // ? Routes
 
+import userRouter from "./routes/auth.route";
 
-
+app.use("/api/v1/auth", userRouter);
 
 // ? Error Middleware
 app.use(customErrorHandler);

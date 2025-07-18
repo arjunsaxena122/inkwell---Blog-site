@@ -1,4 +1,4 @@
-import mongoose, { ObjectId } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { env } from "../config/config";
@@ -10,7 +10,7 @@ type Avatar = {
 };
 
 export type IUser = {
-  _id: ObjectId;
+  _id: Schema.Types.ObjectId;
   avatar: Avatar;
   username: string;
   fullname?: string;

@@ -8,13 +8,13 @@ import {
   generateAccessAndRefreshToken,
   generateRandomString,
 } from "../helper/accessAndRefreshToken";
-import { IReq } from "../middlewares/auth.middleware";
 import {
   customeEmailSender,
   customEmailVerificationSender,
   customForgetPasswordSender,
 } from "../utils/nodemailer";
 import jwt from "jsonwebtoken";
+import { imageUploader } from "../utils/cloudinary";
 
 const userRegister = asyncHandler(async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
@@ -96,11 +96,11 @@ const userLogin = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const userLogout = asyncHandler(async (req: Request, res: Response) => {
-  const { _id } = (req as IReq)?.user;
-
-  if (!_id) {
-    throw new ApiError(404, "User requested Id doesn't exist");
+  if (!req.user) {
+    throw new ApiError(404, "User not found in request");
   }
+
+  const { _id } = req.user;
 
   const user = await User.findByIdAndUpdate(
     _id,
@@ -134,7 +134,11 @@ const userLogout = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const userGetMe = asyncHandler(async (req: Request, res: Response) => {
-  const { _id } = (req as IReq)?.user;
+  if (!req.user) {
+    throw new ApiError(404, "User not found in request");
+  }
+
+  const { _id } = req.user;
 
   const user = await User.findById(_id).select("-password -refreshToken");
 
@@ -175,11 +179,11 @@ const userVerifiedEmail = asyncHandler(async (req: Request, res: Response) => {
 
 const resendEmailVerifiedLink = asyncHandler(
   async (req: Request, res: Response) => {
-    const { _id } = (req as IReq).user;
-
-    if (!_id) {
-      throw new ApiError(404, "Id not found");
+    if (!req.user) {
+      throw new ApiError(404, "User not found in request");
     }
+
+    const { _id } = req.user;
 
     const user = await User.findById(_id).select("-password");
 
@@ -266,12 +270,12 @@ const generateNewAccessAndRefreshToken = asyncHandler(
 );
 
 const changePassword = asyncHandler(async (req: Request, res: Response) => {
-  const { _id } = (req as IReq)?.user;
   const { newPassword, confirmPassword } = req.body;
-
-  if (!_id) {
-    throw new ApiError(404, "Id not found");
+  if (!req.user) {
+    throw new ApiError(404, "User not found in request");
   }
+
+  const { _id } = req.user;
 
   if (!newPassword || !confirmPassword) {
     throw new ApiError(400, "Please fill the required fields");
@@ -323,7 +327,7 @@ const forgetPassword = asyncHandler(async (req: Request, res: Response) => {
   await customeEmailSender({
     mailGen: customForgetPasswordSender(
       user?.username,
-      `http://localhost:3000/api/v1/auth/reset-email/${randToken}`,
+      `http://localhost:3000/api/v1/auth/reset-password/${randToken}`,
     ),
     fromSender: "inkwell@official.com",
     toReceiver: user?.email,
@@ -368,6 +372,25 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, "Password reset successfully"));
 });
 
+// Once Check this API
+const updateAvatar = asyncHandler(async (req: Request, res: Response) => {
+  const avatar = req?.file;
+
+  if (!avatar) {
+    throw new ApiError(404, "Avatar file not found");
+  }
+
+  console.log(avatar);
+
+  const isImageUpload = await imageUploader(avatar?.path, "avatar");
+
+  console.log(isImageUpload);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Avatar upload successfully", isImageUpload));
+});
+
 export {
   userRegister,
   userLogin,
@@ -379,4 +402,5 @@ export {
   changePassword,
   forgetPassword,
   resetPassword,
+  updateAvatar,
 };

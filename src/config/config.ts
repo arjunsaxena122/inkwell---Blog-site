@@ -17,6 +17,7 @@ const envSchema = z.object({
   MAIL_TRAP_HOST: z.string(),
   MAIL_TRAP_USERNAME: z.string(),
   MAIL_TRAP_PASSWORD: z.string(),
+  CLOUDINARY_API_KEY: z.string(),
 });
 
 const createEnv = (env: NodeJS.ProcessEnv) => {
