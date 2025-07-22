@@ -11,6 +11,8 @@ const router: Router = Router();
 
 router.route("/add").post(rbac([UserRolesEnum.ADMIN]), addCategory);
 router.route("/remove").post(rbac([UserRolesEnum.ADMIN]), removeCategory);
-router.route("/get-all-category").post(rbac([UserRolesEnum.ADMIN]), getAllCategory);
+router
+  .route("/get-all-category")
+  .post(rbac([UserRolesEnum.ADMIN, UserRolesEnum.USER]), getAllCategory);
 
 export default router;

@@ -1,10 +1,13 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { mongo, Schema } from "mongoose";
 import { IUser } from "./auth.model";
+import { IPost } from "./post.model";
 
 export type IComment = {
   content: string;
   likes: IUser;
   dislikes: IUser;
+  post: IPost;
+  user : IUser
 };
 
 const commentSchema = new Schema<IComment>(
@@ -16,17 +19,32 @@ const commentSchema = new Schema<IComment>(
       unique: true,
     },
 
-    likes: [{
-      type : Schema.Types.ObjectId,
-      ref : "User",
-      required : true
-    }],
+    likes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+    ],
 
-    dislikes: [{
-      type : Schema.Types.ObjectId,
-      ref : "User",
-      required : true
-    }],
+    dislikes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+    ],
+
+    post: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
+    },
+
+    user : {
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "User"
+    }
+
   },
   {
     timestamps: true,

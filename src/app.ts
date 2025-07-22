@@ -20,12 +20,14 @@ app.use(cookieParser());
 // ? Routes
 
 import userRouter from "./routes/auth.route";
-import postRouter from "./routes/post.route"
+import postRouter from "./routes/post.route";
 import categoryRouter from "./routes/category.route";
+import commentRouter from "./routes/comment.route";
 
 app.use("/api/v1/auth", userRouter);
-app.use("/api/v1",postRouter)
+app.use("/api/v1", postRouter);
 app.use("/api/v1/category", categoryRouter);
+app.use("/api/v1/post/:pid", commentRouter);
 
 // ? Error Middleware
 app.use(customErrorHandler);

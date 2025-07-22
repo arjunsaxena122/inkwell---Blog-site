@@ -25,7 +25,7 @@ const createPost = asyncHandler(async (req: Request, res: Response) => {
     content,
     category,
     likes: 0,
-    comments: 0,
+    // comments: 0,
     subscribe: 0,
     viewsCount: 0,
     author: req?.user?._id,

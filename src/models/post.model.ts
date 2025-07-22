@@ -6,10 +6,10 @@ import { IComment } from "./comment.model";
 export type IPost = {
   title: string;
   content: string;
-  category: string[];
+  category: string;
   status: string;
   likes: IUser;
-  comments: IComment;
+  // comments: IComment;
   subscribe: IUser;
   viewsCount: number;
   author: IUser;
@@ -32,11 +32,11 @@ const postSchema = new Schema<IPost>(
     },
 
     category: {
-      type: [String],
+      type: String,
       trim: true,
       lowercase: true,
       required: [true, "category is required"],
-      default: [],
+      default: "",
     },
 
     status: {
@@ -52,12 +52,12 @@ const postSchema = new Schema<IPost>(
       },
     ],
 
-    comments: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Comment",
-      },
-    ],
+    // comments: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: "Comment",
+    //   },
+    // ],
 
     subscribe: [
       {
