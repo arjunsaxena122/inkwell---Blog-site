@@ -128,7 +128,7 @@ userSchema.methods.isValidPassword = async function (
 
 userSchema.methods.generatingAccessToken = function () {
   return jwt.sign({ id: this._id }, env.ACCESS_TOKEN_KEY, {
-    expiresIn: env.ACCESS_TOKEN_EXPIRY as jwt.SignOptions["expiresIn"],
+    expiresIn: env.ACCESS_TOKEN_EXPRIY as jwt.SignOptions["expiresIn"],
   });
 };
 

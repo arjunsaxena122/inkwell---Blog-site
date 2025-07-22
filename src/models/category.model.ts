@@ -3,12 +3,11 @@ import { model, Schema } from "mongoose";
 const categorySchema = new Schema(
   {
     name: {
-      type: [String],
-      trime: true,
+      type: String,
+      trim: true,
       lowercase: true,
       unique: true,
-      required: true,
-      default: [],
+      required: [true,"Category name is required"],
     },
   },
   { timestamps: true },

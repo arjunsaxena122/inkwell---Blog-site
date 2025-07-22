@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { User } from "../models/auth.model";
 import { ApiError } from "../utils/api-error";
 import crypto from "crypto";
@@ -21,8 +20,8 @@ export const generateAccessAndRefreshToken = async (
     throw new ApiError(401, "Invalid credentionals");
   }
 
-  const accessToken = generateRandomString();
-  const refreshToken = generateRandomString();
+  const accessToken = user.generatingAccessToken();
+  const refreshToken = user.generatingRefreshToken();
 
   user.refreshToken = refreshToken;
   user.save({ validateBeforeSave: false });

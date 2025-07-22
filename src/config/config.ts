@@ -11,7 +11,7 @@ const envSchema = z.object({
   NODE_ENV: z.string().optional(),
   MONGO_URI: z.string(),
   ACCESS_TOKEN_KEY: z.string(),
-  ACCESS_TOKEN_EXPIRY: z.string(),
+  ACCESS_TOKEN_EXPRIY: z.string(),
   REFRESH_TOKEN_KEY: z.string(),
   REFRESH_TOKEN_EXPIRY: z.string(),
   MAIL_TRAP_HOST: z.string(),

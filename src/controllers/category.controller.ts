@@ -27,9 +27,7 @@ const addCategory = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(409, "category already exist");
   }
 
-  const newCategory = await Category.create({
-    name,
-  });
+  const newCategory = await Category.create({ name });
 
   return res
     .status(201)
@@ -52,16 +50,15 @@ const removeCategory = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, "Please fill required field");
   }
 
-  const existedCategory = await Category.findOne({ name });
+  const category = await Category.findOne({ name });
 
-  if (!existedCategory) {
+  if (!category) {
     throw new ApiError(404, "category not found");
   }
 
-  const deleteCategory = await Category.findByIdAndDelete(
-    existedCategory?._id,
+  const deleteCategory = await Category.findByIdAndDelete(category?._id, {
     name,
-  );
+  });
 
   return res
     .status(200)
@@ -74,17 +71,12 @@ const getAllCategory = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const user = req.user;
-  const { cid } = req.params;
 
   if (user?.role !== UserRolesEnum.ADMIN) {
     throw new ApiError(403, "ERROR: ACCESS DENIED");
   }
 
-  if (!cid) {
-    throw new ApiError(404, "Request category ID not found");
-  }
-
-  const category = await Category.find({ id: cid });
+  const category = await Category.find({});
 
   if (!category) {
     throw new ApiError(404, "Category not found");
