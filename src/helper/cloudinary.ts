@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import { env } from "../config/config";
-import { ApiError } from "./api-error";
+import { ApiError } from "../utils/api-error";
 import fs from "fs";
 
 cloudinary.config({

@@ -3,7 +3,7 @@ import { asyncHandler } from "../utils/async-handler";
 import { ApiError } from "../utils/api-error";
 import { Category } from "../models/category.model";
 import { ApiResponse } from "../utils/api-response";
-import { UserRolesEnum } from "../utils/constants";
+import { UserRolesEnum } from "../constants/constants";
 
 const addCategory = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user || !req.user._id) {

@@ -12,9 +12,9 @@ import {
   customeEmailSender,
   customEmailVerificationSender,
   customForgetPasswordSender,
-} from "../utils/nodemailer";
+} from "../helper/nodemailer";
 import jwt from "jsonwebtoken";
-import { imageUploader } from "../utils/cloudinary";
+import { imageUploader } from "../helper/cloudinary";
 
 const userRegister = asyncHandler(async (req: Request, res: Response) => {
   const { username, email, password } = req.body;

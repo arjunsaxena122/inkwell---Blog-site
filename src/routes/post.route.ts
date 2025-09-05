@@ -10,7 +10,16 @@ import {
   updatePostById,
 } from "../controllers/post.controller";
 import rbac from "../middlewares/rbac.moddleware";
-import { UserRolesEnum } from "../utils/constants";
+import { UserRolesEnum } from "../constants/constants";
+import { validate } from "../middlewares/validate.middleware";
+import {
+  approvePostByAdminValidataionSchema,
+  createPostValidationSchema,
+  deletePostByIdValidationSchema,
+  getPostByIdValidationSchema,
+  rejectPostByAdminValidationSchema,
+  updatePostByIdValidationSchema
+} from "../validators/post.validate";
 
 const router: Router = Router();
 
@@ -19,17 +28,28 @@ router
   .get(rbac([UserRolesEnum.ADMIN]), getAllPendingPostByAdmin);
 router
   .route("/admin/posts/:pid/aprrove")
-  .patch(rbac([UserRolesEnum.ADMIN]), approvePostByAdmin);
+  .patch(validate(approvePostByAdminValidataionSchema, ["params"]), rbac([UserRolesEnum.ADMIN]), approvePostByAdmin);
 router
   .route("/admin/posts/:pid/reject")
-  .patch(rbac([UserRolesEnum.ADMIN]), rejectPostByAdmin);
+  .patch(validate(rejectPostByAdminValidationSchema, ["params"]), rbac([UserRolesEnum.ADMIN]), rejectPostByAdmin);
 
-router.route("/posts").post(createPost);
+router.route("/posts").post(validate(createPostValidationSchema, ["params", "body"]), createPost);
 router
   .route("/posts/:pid")
-  .get(getPostById)
-  .put(rbac([UserRolesEnum.USER]), updatePostById)
-  .delete(rbac([UserRolesEnum.USER]), deletePostById);
+  .get(
+    validate(getPostByIdValidationSchema, ["params"]),
+    getPostById
+  )
+  .put(
+    validate(updatePostByIdValidationSchema, ["params"]),
+    rbac([UserRolesEnum.USER]),
+    updatePostById
+  )
+  .delete(
+    validate(deletePostByIdValidationSchema, ["params"]),
+    rbac([UserRolesEnum.USER]),
+    deletePostById
+  );
 router.route("/posts").get(getAllPost);
 
 export default router;

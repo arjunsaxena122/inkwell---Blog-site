@@ -3,7 +3,7 @@ import { asyncHandler } from "../utils/async-handler";
 import { ApiError } from "../utils/api-error";
 import { Post } from "../models/post.model";
 import { ApiResponse } from "../utils/api-response";
-import { PostStatusEnum, UserRolesEnum } from "../utils/constants";
+import { PostStatusEnum, UserRolesEnum } from "../constants/constants";
 
 const createPost = asyncHandler(async (req: Request, res: Response) => {
   const { title, content, category } = req.body;

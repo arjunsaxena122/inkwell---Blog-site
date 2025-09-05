@@ -1,4 +1,4 @@
-import mongoose, { mongo, Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IUser } from "./auth.model";
 import { IPost } from "./post.model";
 
@@ -7,7 +7,7 @@ export type IComment = {
   likes: IUser;
   dislikes: IUser;
   post: IPost;
-  user : IUser
+  user: IUser
 };
 
 const commentSchema = new Schema<IComment>(
@@ -40,9 +40,9 @@ const commentSchema = new Schema<IComment>(
       ref: "Post",
     },
 
-    user : {
-      type : mongoose.Schema.Types.ObjectId,
-      ref : "User"
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
     }
 
   },

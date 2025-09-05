@@ -14,13 +14,18 @@ import {
 } from "../controllers/auth.controller";
 import { verifyJwt } from "../middlewares/auth.middleware";
 import { upload } from "../middlewares/multer.middleware";
+import { validate } from "../middlewares/validate.middleware";
+import { userGetMeValidationSchema, userLoginValidationSchema, userLogoutValidationSchema, userRegisterValidationSchema } from "../validators/auth.validate";
 
 const router: Router = Router();
 
-router.route("/user-register").post(userRegister);
-router.route("/user-login").post(userLogin);
-router.route("/user-logout").get(verifyJwt, userLogout);
-router.route("/get-me").get(userGetMe);
+router.route("/user-register").post(validate(userRegisterValidationSchema, ["body"]), userRegister);
+router.route("/user-login").post(validate(userLoginValidationSchema, ["body"]), userLogin);
+router.route("/user-logout").get(validate(userLogoutValidationSchema, ["params"]), verifyJwt, userLogout);
+router.route("/get-me").get(validate(userGetMeValidationSchema, ["params"]), verifyJwt, userGetMe);
+
+// TODO Pending validation schema
+
 router.route("/resend-email-link").get(resendEmailVerifiedLink);
 router.route("/verify-email").get(userVerifiedEmail);
 router.route("/api-key").get(generateNewAccessAndRefreshToken);

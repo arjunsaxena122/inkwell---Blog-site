@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { env } from "../config/config";
-import { AvailableUserRolesEnum, UserRolesEnum } from "../utils/constants";
+import { AvailableUserRolesEnum, UserRolesEnum } from "../constants/constants";
 
 type Avatar = {
   url: string;

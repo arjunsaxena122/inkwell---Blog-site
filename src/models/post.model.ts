@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-import { AvailablePostStatusEnum, PostStatusEnum } from "../utils/constants";
+import { AvailablePostStatusEnum, PostStatusEnum } from "../constants/constants";
 import { IUser } from "./auth.model";
-import { IComment } from "./comment.model";
 
 export type IPost = {
   title: string;
