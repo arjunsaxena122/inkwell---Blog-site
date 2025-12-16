@@ -15,6 +15,7 @@ import {
 } from "../helper/nodemailer";
 import jwt from "jsonwebtoken";
 import { imageUploader } from "../helper/cloudinary";
+import { IGetAuthRequest } from "../types/auth.types";
 
 const userRegister = asyncHandler(async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
@@ -23,9 +24,10 @@ const userRegister = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, `Please fill the require field`);
   }
 
-  const existedUser = await User.find({
-    $or: [username, email],
+  const existedUser = await User.findOne({
+    $or: [{ username }, { email }],
   });
+
 
   if (existedUser) {
     throw new ApiError(409, "Credentional already exist");
@@ -95,7 +97,7 @@ const userLogin = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, "Login successfully"));
 });
 
-const userLogout = asyncHandler(async (req: Request, res: Response) => {
+const userLogout = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   if (!req.user) {
     throw new ApiError(404, "User not found in request");
   }
@@ -133,7 +135,7 @@ const userLogout = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, "Logout Successfully", user));
 });
 
-const userGetMe = asyncHandler(async (req: Request, res: Response) => {
+const userGetMe = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   if (!req.user) {
     throw new ApiError(404, "User not found in request");
   }
@@ -178,7 +180,7 @@ const userVerifiedEmail = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const resendEmailVerifiedLink = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: IGetAuthRequest, res: Response) => {
     if (!req.user) {
       throw new ApiError(404, "User not found in request");
     }
@@ -196,15 +198,17 @@ const resendEmailVerifiedLink = asyncHandler(
     user.emailVerificationExpiry = new Date(Date.now() * 1000 * 60 * 2);
     user.save({ validateBeforeSave: false });
 
-    await customeEmailSender({
-      mailGen: customEmailVerificationSender(
-        user?.username,
-        `http://localhost:3000/api/v1/auth/verify-email/${randToken}`,
-      ),
-      fromSender: "inkwell@official.com",
-      toReceiver: user?.email,
-      subject: "Email Verification Link",
-    });
+    if (user?.email === "string" && user?.username) {
+      await customeEmailSender({
+        mailGen: customEmailVerificationSender(
+          user?.username,
+          `http://localhost:3000/api/v1/auth/verify-email/${randToken}`,
+        ),
+        fromSender: "inkwell@official.com",
+        toReceiver: user?.email,
+        subject: "Email Verification Link",
+      });
+    }
 
     return res
       .status(200)
@@ -269,7 +273,7 @@ const generateNewAccessAndRefreshToken = asyncHandler(
   },
 );
 
-const changePassword = asyncHandler(async (req: Request, res: Response) => {
+const changePassword = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   const { newPassword, confirmPassword } = req.body;
   if (!req.user) {
     throw new ApiError(404, "User not found in request");
@@ -324,16 +328,18 @@ const forgetPassword = asyncHandler(async (req: Request, res: Response) => {
   user.forgetPasswordExpiry = new Date(Date.now() * 1000 * 60 * 2);
   user.save();
 
-  await customeEmailSender({
-    mailGen: customForgetPasswordSender(
-      user?.username,
-      `http://localhost:3000/api/v1/auth/reset-password/${randToken}`,
-    ),
-    fromSender: "inkwell@official.com",
-    toReceiver: user?.email,
-    subject: "Email Verification Link",
-  });
+  if (user?.username && user?.email) {
+    await customeEmailSender({
+      mailGen: customForgetPasswordSender(
+        user.username,
+        `http://localhost:3000/api/v1/auth/reset-password/${randToken}`,
+      ),
+      fromSender: "inkwell@official.com",
+      toReceiver: user.email,
+      subject: "Email Verification Link",
+    });
 
+  }
   return res
     .status(200)
     .json(new ApiResponse(200, "forgetten password email sent"));

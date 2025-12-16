@@ -3,8 +3,9 @@ import { asyncHandler } from "../utils/async-handler";
 import { ApiError } from "../utils/api-error";
 import { Comment } from "../models/comment.model";
 import { ApiResponse } from "../utils/api-response";
+import { IGetAuthRequest } from "../types/auth.types";
 
-const addComment = asyncHandler(async (req: Request, res: Response) => {
+const addComment = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   const { content } = req.body;
   const { pid } = req.params;
 

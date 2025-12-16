@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { AvailablePostStatusEnum, PostStatusEnum } from "../constants/constants";
-import { IUser } from "./auth.model";
+import { IUser } from "../types/auth.types";
 
 export type IPost = {
   title: string;

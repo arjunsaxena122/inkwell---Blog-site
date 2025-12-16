@@ -1,13 +1,14 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { asyncHandler } from "../utils/async-handler";
 import { ApiError } from "../utils/api-error";
 import { Category } from "../models/category.model";
 import { ApiResponse } from "../utils/api-response";
 import { UserRolesEnum } from "../constants/constants";
+import { IGetAuthRequest } from "../types/auth.types";
 
-const addCategory = asyncHandler(async (req: Request, res: Response) => {
+const addCategory = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   if (!req.user || !req.user._id) {
-    throw new ApiError(404, "Requested user and userId not found");
+    throw new ApiError(404, "IGetAuthRequested user and userId not found");
   }
 
   const user = req.user;
@@ -34,9 +35,9 @@ const addCategory = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(201, "category added", newCategory));
 });
 
-const removeCategory = asyncHandler(async (req: Request, res: Response) => {
+const removeCategory = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   if (!req.user || !req.user._id) {
-    throw new ApiError(404, "Requested user and userId not found");
+    throw new ApiError(404, "IGetAuthRequested user and userId not found");
   }
 
   const user = req.user;
@@ -65,9 +66,9 @@ const removeCategory = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, "category remove successfully", deleteCategory));
 });
 
-const getAllCategory = asyncHandler(async (req: Request, res: Response) => {
+const getAllCategory = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   if (!req.user || !req.user._id) {
-    throw new ApiError(404, "Requested user and userId not found");
+    throw new ApiError(404, "IGetAuthRequested user and userId not found");
   }
 
   const user = req.user;

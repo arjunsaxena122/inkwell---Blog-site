@@ -3,27 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { env } from "../config/config";
 import { AvailableUserRolesEnum, UserRolesEnum } from "../constants/constants";
-
-type Avatar = {
-  url: string;
-  localPath: string;
-};
-
-export type IUser = {
-  _id: Schema.Types.ObjectId;
-  avatar: Avatar;
-  username: string;
-  fullname?: string;
-  email: string;
-  password: string;
-  isEmailVerified?: boolean;
-  role: string;
-  emailVerificationToken?: string | null;
-  emailVerificationExpiry?: Date | null;
-  forgetPasswordToken?: string | null;
-  forgetPasswordExpiry?: Date | null;
-  refreshToken?: string;
-};
+import { IUser } from "../types/auth.types";
 
 export interface IUserMethods {
   isValidPassword(password: string): Promise<boolean>;
@@ -115,7 +95,9 @@ const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>(
 
 userSchema.pre<IUser & mongoose.Document>("save", async function (next) {
   if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 10);
+    if (typeof this.password === "string") {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
   }
   next();
 });
@@ -123,7 +105,10 @@ userSchema.pre<IUser & mongoose.Document>("save", async function (next) {
 userSchema.methods.isValidPassword = async function (
   password: string,
 ): Promise<boolean> {
-  return await bcrypt.compare(password, this.password);
+  if (typeof this.password === "string") {
+    return await bcrypt.compare(password, this.password);
+  }
+  return false;
 };
 
 userSchema.methods.generatingAccessToken = function () {

@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IUser } from "./auth.model";
+import { IUser } from "../types/auth.types";
 import { IPost } from "./post.model";
 
 export type IComment = {

@@ -1,11 +1,12 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { asyncHandler } from "../utils/async-handler";
 import { ApiError } from "../utils/api-error";
 import { Post } from "../models/post.model";
 import { ApiResponse } from "../utils/api-response";
 import { PostStatusEnum, UserRolesEnum } from "../constants/constants";
+import { IGetAuthRequest } from "../types/auth.types";
 
-const createPost = asyncHandler(async (req: Request, res: Response) => {
+const createPost = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   const { title, content, category } = req.body;
 
   if (!title || !content || !category) {
@@ -42,7 +43,7 @@ const createPost = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(201, "Blog create successfully", createdPost));
 });
 
-const getPostById = asyncHandler(async (req: Request, res: Response) => {
+const getPostById = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   const { pid } = req.params;
 
   if (!pid) {
@@ -60,7 +61,7 @@ const getPostById = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, `Post fetched successfully`, post));
 });
 
-const getAllPost = asyncHandler(async (req: Request, res: Response) => {
+const getAllPost = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   const post = await Post.find({ status: PostStatusEnum.APPROVE });
 
   if (!post) {
@@ -70,7 +71,7 @@ const getAllPost = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json(new ApiResponse(200, "Fetched all post", post));
 });
 
-const deletePostById = asyncHandler(async (req: Request, res: Response) => {
+const deletePostById = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   const { pid } = req.params;
 
   if (!pid) {
@@ -104,7 +105,7 @@ const deletePostById = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, `Post delete successfully`, delPost));
 });
 
-const updatePostById = asyncHandler(async (req: Request, res: Response) => {
+const updatePostById = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   const { pid } = req.params;
   const { title, content, category } = req.body;
 
@@ -162,9 +163,9 @@ const updatePostById = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getAllPendingPostByAdmin = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: IGetAuthRequest, res: Response) => {
     if (!req.user) {
-      throw new ApiError(404, "Requested user not found");
+      throw new ApiError(404, "IGetAuthRequested user not found");
     }
 
     const user = req.user;
@@ -185,9 +186,9 @@ const getAllPendingPostByAdmin = asyncHandler(
   },
 );
 
-const approvePostByAdmin = asyncHandler(async (req: Request, res: Response) => {
+const approvePostByAdmin = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   if (!req.user) {
-    throw new ApiError(404, "Requested user not found");
+    throw new ApiError(404, "IGetAuthRequested user not found");
   }
 
   const user = req.user;
@@ -198,7 +199,7 @@ const approvePostByAdmin = asyncHandler(async (req: Request, res: Response) => {
   }
 
   if (!pid) {
-    throw new ApiError(404, "Requested postId not found");
+    throw new ApiError(404, "IGetAuthRequested postId not found");
   }
 
   const post = await Post.findById(pid);
@@ -215,9 +216,9 @@ const approvePostByAdmin = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, "Fetched all approve post", post));
 });
 
-const rejectPostByAdmin = asyncHandler(async (req: Request, res: Response) => {
+const rejectPostByAdmin = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   if (!req.user) {
-    throw new ApiError(404, "Requested user not found");
+    throw new ApiError(404, "IGetAuthRequested user not found");
   }
 
   const user = req.user;
@@ -228,7 +229,7 @@ const rejectPostByAdmin = asyncHandler(async (req: Request, res: Response) => {
   }
 
   if (!pid) {
-    throw new ApiError(404, "Requested postId not found");
+    throw new ApiError(404, "IGetAuthRequested postId not found");
   }
 
   const post = await Post.findById(pid);

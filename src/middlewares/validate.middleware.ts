@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { ZodType } from "zod";
-import { Source } from "../types/validate.type";
+import { ZodError, ZodType } from "zod";
+import { Source } from "../types/validate.type"
 import { ApiError } from "../utils/api-error";
 
 export const validate = (schema: ZodType, source: Source[]) => {
@@ -8,12 +8,13 @@ export const validate = (schema: ZodType, source: Source[]) => {
         try {
             const data: Record<string, unknown> = {}
             for (const src of source) {
-                Object.assign(data, src)
+                Object.assign(data, req[src])
             }
             await schema.parseAsync(data)
             next()
-        } catch (error) {
-            next(new ApiError(400, `zod validation failed cause of ${error} `, [error]))
+        } catch (error: unknown) {
+            const errorMessage = (error instanceof ZodError) ? error?.issues[0].message : "Internal server error";
+            next(new ApiError(400, `Validation Error: ${errorMessage}`, [error]))
         }
     }
 }

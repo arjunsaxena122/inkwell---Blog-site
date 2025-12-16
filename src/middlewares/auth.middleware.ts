@@ -3,9 +3,10 @@ import { ApiError } from "../utils/api-error";
 import jwt from "jsonwebtoken";
 import { env } from "../config/config";
 import { User } from "../models/auth.model";
+import { IGetAuthRequest } from "../types/auth.types";
 
 export const verifyJwt = async (
-  req: Request,
+  req: IGetAuthRequest,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {

@@ -11,17 +11,12 @@
     /* Type Checking */
     "strict": true, /* Enable all strict type-checking options. */
     "skipLibCheck": true, /* Skip type checking all .d.ts files. */
-    // ? Needed If use types in src/types/express/index.d.ts
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/types"
-    ]
   },
   "include": [
-    "src",
-    "src/**/*"
+    "src"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    ".env"
   ]
 }
