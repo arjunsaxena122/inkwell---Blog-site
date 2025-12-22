@@ -26,7 +26,7 @@ import commentRouter from "./routes/comment.route";
 
 app.use("/api/v1/auth", userRouter);
 app.use("/api/v1", postRouter);
-app.use("/api/v1/category", categoryRouter);
+app.use("/api/v1", categoryRouter);
 app.use("/api/v1/post/:pid", commentRouter);
 
 // ? Error Middleware

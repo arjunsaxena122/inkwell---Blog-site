@@ -1,6 +1,6 @@
 export const UserRolesEnum = {
-  ADMIN : "admin",
-  USER : "user"
+  ADMIN: "admin",
+  USER: "user"
 }
 
 export const AvailableUserRolesEnum = Object.values(UserRolesEnum)
@@ -12,5 +12,3 @@ export const PostStatusEnum = {
 };
 
 export const AvailablePostStatusEnum = Object.values(PostStatusEnum);
-
-
