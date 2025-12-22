@@ -15,14 +15,14 @@ import {
 import { verifyJwt } from "../middlewares/auth.middleware";
 import { upload } from "../middlewares/multer.middleware";
 import { validate } from "../middlewares/validate.middleware";
-import { userGetMeValidationSchema, userLoginValidationSchema, userLogoutValidationSchema, userRegisterValidationSchema } from "../validators/auth.validate";
+import { userLoginValidationSchema, userRegisterValidationSchema } from "../validators/auth.validate";
 
 const router: Router = Router();
 
 router.route("/user-register").post(validate(userRegisterValidationSchema, ["body"]), userRegister);
 router.route("/user-login").post(validate(userLoginValidationSchema, ["body"]), userLogin);
-router.route("/user-logout").get(validate(userLogoutValidationSchema, ["params"]), verifyJwt, userLogout);
-router.route("/get-me").get(validate(userGetMeValidationSchema, ["params"]), verifyJwt, userGetMe);
+router.route("/user-logout").get(verifyJwt, userLogout);
+router.route("/get-me").get(verifyJwt, userGetMe);
 
 // TODO Pending validation schema
 

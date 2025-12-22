@@ -29,7 +29,7 @@ export const verifyJwt = async (
     }
 
     const user = await User.findById(decodeToken?.id).select(
-      "-password refreshToken",
+      "-password -refreshToken",
     );
 
     if (!user) {
@@ -38,7 +38,8 @@ export const verifyJwt = async (
 
     req.user = user;
     next();
-  } catch (err) {
-    next(new ApiError(403, "ERROR: ACCESS DENIED"));
+  } catch (err: unknown) {
+    const errorMessage = (err instanceof Error) ? err?.message : "Internal Server error"
+    next(new ApiError(403, "ERROR: ACCESS DENIED", [errorMessage]));
   }
 };

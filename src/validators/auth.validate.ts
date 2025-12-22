@@ -37,15 +37,3 @@ export const userLoginValidationSchema = z.object({
         .min(8, { message: "Password must be minimum 8 length" })
         .max(16, { message: "Password length exceed" })
 })
-
-export const userLogoutValidationSchema = z.object({
-    id : z.string().refine((val) => mongoose.Types.ObjectId.isValid(val),{
-        error : "Invalid userID"
-    })
-})
-
-export const userGetMeValidationSchema = z.object({
-    id : z.string().refine((val) => mongoose.Types.ObjectId.isValid(val),{
-        error : "Invalid userID"
-    })
-})

@@ -57,7 +57,7 @@ const userLogin = asyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, `Please fill the require field`);
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select("-refreshToken");
 
   if (!user) {
     throw new ApiError(
@@ -90,11 +90,19 @@ const userLogin = asyncHandler(async (req: Request, res: Response) => {
     maxAge: 1000 * 60 * 60 * 24,
   };
 
+  const responseUserInfo = {
+    avatar: user?.avatar,
+    username: user?.username,
+    email: user?.email,
+    isEmailVerified: user?.isEmailVerified,
+    role: user?.role
+  }
+
   return res
     .status(200)
     .cookie("accessToken", accessToken, accessOptions)
     .cookie("refreshToken", refreshToken, refreshOptions)
-    .json(new ApiResponse(200, "Login successfully"));
+    .json(new ApiResponse(200, "Login successfully", responseUserInfo));
 });
 
 const userLogout = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
@@ -140,13 +148,7 @@ const userGetMe = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
     throw new ApiError(404, "User not found in request");
   }
 
-  const { _id } = req.user;
-
-  const user = await User.findById(_id).select("-password -refreshToken");
-
-  if (!user) {
-    throw new ApiError(404, "User not found");
-  }
+  const user = req.user;
 
   return res
     .status(200)
