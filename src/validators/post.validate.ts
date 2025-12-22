@@ -4,7 +4,7 @@ import mongoose from "mongoose"
 export const createPostValidationSchema = z.object({
     title: z.string().trim().nonempty("Title is required"),
     content: z.string().trim().nonempty("Content is required"),
-    category: z.string().trim().nonempty("Content is required").toLowerCase(),
+    category: z.string().trim().nonempty("Category is required").toLowerCase(),
 })
 
 export const getPostByIdValidationSchema = z.object({

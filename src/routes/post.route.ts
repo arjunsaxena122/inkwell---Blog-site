@@ -20,20 +20,59 @@ import {
   rejectPostByAdminValidationSchema,
   updatePostByIdValidationSchema
 } from "../validators/post.validate";
+import { verifyJwt } from "../middlewares/auth.middleware";
 
 const router: Router = Router();
 
-router
-  .route("/admin/posts")
-  .get(rbac([UserRolesEnum.ADMIN]), getAllPendingPostByAdmin);
-router
-  .route("/admin/posts/:pid/aprrove")
-  .patch(validate(approvePostByAdminValidataionSchema, ["params"]), rbac([UserRolesEnum.ADMIN]), approvePostByAdmin);
-router
-  .route("/admin/posts/:pid/reject")
-  .patch(validate(rejectPostByAdminValidationSchema, ["params"]), rbac([UserRolesEnum.ADMIN]), rejectPostByAdmin);
+// ! ADMIN 
 
-router.route("/posts").post(validate(createPostValidationSchema, ["params", "body"]), createPost);
+router
+  .route("/posts/admin")
+  .get(
+    verifyJwt,
+    rbac([UserRolesEnum.ADMIN]),
+    getAllPendingPostByAdmin
+  );
+
+router
+  .route("/posts/:pid/admin/approve")
+  .patch(
+    validate(approvePostByAdminValidataionSchema, ["params"]),
+    verifyJwt,
+    rbac([UserRolesEnum.ADMIN]),
+    approvePostByAdmin
+  );
+
+router
+  .route("/posts/:pid/admin/reject")
+  .patch(
+    validate(rejectPostByAdminValidationSchema, ["params"]),
+    verifyJwt,
+    rbac([UserRolesEnum.ADMIN]),
+    rejectPostByAdmin
+  );
+
+
+// ! User
+router
+  .route("/posts/getAllPost")
+  .get(
+    verifyJwt,
+    rbac([UserRolesEnum.ADMIN, UserRolesEnum.USER]),
+    getAllPost
+  );
+
+router
+  .route("/posts")
+  .post(
+    validate(createPostValidationSchema, ["params", "body"]),
+    verifyJwt,
+    rbac([UserRolesEnum.ADMIN, UserRolesEnum.USER]),
+    createPost
+  );
+
+
+
 router
   .route("/posts/:pid")
   .get(
@@ -42,14 +81,15 @@ router
   )
   .put(
     validate(updatePostByIdValidationSchema, ["params"]),
-    rbac([UserRolesEnum.USER]),
+    rbac([UserRolesEnum.USER, UserRolesEnum.ADMIN]),
     updatePostById
   )
   .delete(
     validate(deletePostByIdValidationSchema, ["params"]),
-    rbac([UserRolesEnum.USER]),
+    rbac([UserRolesEnum.USER, UserRolesEnum.ADMIN]),
     deletePostById
   );
-router.route("/posts").get(getAllPost);
+
+
 
 export default router;

@@ -5,12 +5,12 @@ import { IUser } from "../types/auth.types";
 export type IPost = {
   title: string;
   content: string;
-  category: string;
+  category: mongoose.Types.ObjectId;
   status: string;
-  likes: IUser;
+  // likes: IUser;
   // comments: IComment;
-  subscribe: IUser;
-  viewsCount: number;
+  // subscribe: IUser;
+  // viewsCount: number;
   author: IUser;
 };
 
@@ -31,11 +31,9 @@ const postSchema = new Schema<IPost>(
     },
 
     category: {
-      type: String,
-      trim: true,
-      lowercase: true,
-      required: [true, "category is required"],
-      default: "",
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+      required: [true, "category is required"]
     },
 
     status: {
@@ -44,12 +42,12 @@ const postSchema = new Schema<IPost>(
       default: PostStatusEnum?.PENDING,
     },
 
-    likes: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    // likes: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: "User",
+    //   },
+    // ],
 
     // comments: [
     //   {
@@ -58,19 +56,19 @@ const postSchema = new Schema<IPost>(
     //   },
     // ],
 
-    subscribe: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    // subscribe: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: "User",
+    //   },
+    // ],
 
-    viewsCount: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    // viewsCount: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: "User",
+    //   },
+    // ],
 
     author: {
       type: Schema.Types.ObjectId,

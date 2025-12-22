@@ -5,6 +5,7 @@ import { Post } from "../models/post.model";
 import { ApiResponse } from "../utils/api-response";
 import { PostStatusEnum, UserRolesEnum } from "../constants/constants";
 import { IGetAuthRequest } from "../types/auth.types";
+import { Category } from "../models/category.model";
 
 const createPost = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   const { title, content, category } = req.body;
@@ -13,26 +14,36 @@ const createPost = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
     throw new ApiError(400, "Please fill all the required fields");
   }
 
-  const existedPost = await Post.findOne({
-    title,
-  });
+  const isCategoryExist = await Category.findOne({ name: category.toLowerCase() })
+
+  if (!isCategoryExist) {
+    throw new ApiError(404, "Invalid category typed")
+  }
+
+  const existedPost = await Post.findOne({ title });
 
   if (existedPost) {
     throw new ApiError(409, "Please gives unique post title");
   }
 
+
   const post = await Post.create({
     title,
     content,
-    category,
-    likes: 0,
-    // comments: 0,
-    subscribe: 0,
-    viewsCount: 0,
+    category: isCategoryExist?._id,
     author: req?.user?._id,
   });
 
-  const createdPost = await Post.findById(post?._id);
+  const createdPost = await Post.findById(post?._id).populate([
+    {
+      path: "category",
+      select: "name"
+    },
+    {
+      path: "author",
+      select: "username email isEmailVerified role"
+    }
+  ])
 
   if (!createdPost) {
     throw new ApiError(500, "Internal server issue, Please try again!");
@@ -40,7 +51,7 @@ const createPost = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(201, "Blog create successfully", createdPost));
+    .json(new ApiResponse(201, "Blog post create successfully", createdPost));
 });
 
 const getPostById = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
@@ -62,7 +73,7 @@ const getPostById = asyncHandler(async (req: IGetAuthRequest, res: Response) => 
 });
 
 const getAllPost = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
-  const post = await Post.find({ status: PostStatusEnum.APPROVE });
+  const post = await Post.find({});
 
   if (!post) {
     throw new ApiError(404, "Approve post not available");
@@ -188,7 +199,7 @@ const getAllPendingPostByAdmin = asyncHandler(
 
 const approvePostByAdmin = asyncHandler(async (req: IGetAuthRequest, res: Response) => {
   if (!req.user) {
-    throw new ApiError(404, "IGetAuthRequested user not found");
+    throw new ApiError(404, "requested user not found");
   }
 
   const user = req.user;
@@ -199,7 +210,7 @@ const approvePostByAdmin = asyncHandler(async (req: IGetAuthRequest, res: Respon
   }
 
   if (!pid) {
-    throw new ApiError(404, "IGetAuthRequested postId not found");
+    throw new ApiError(404, "requested postId not found");
   }
 
   const post = await Post.findById(pid);
@@ -229,7 +240,7 @@ const rejectPostByAdmin = asyncHandler(async (req: IGetAuthRequest, res: Respons
   }
 
   if (!pid) {
-    throw new ApiError(404, "IGetAuthRequested postId not found");
+    throw new ApiError(404, "postId not found");
   }
 
   const post = await Post.findById(pid);
@@ -243,7 +254,7 @@ const rejectPostByAdmin = asyncHandler(async (req: IGetAuthRequest, res: Respons
 
   return res
     .status(200)
-    .json(new ApiResponse(200, "Fetched all reject post", post));
+    .json(new ApiResponse(200, `${user?.username} your blog post is reject by Admin`, post));
 });
 
 export {
