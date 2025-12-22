@@ -57,9 +57,7 @@ const removeCategory = asyncHandler(async (req: IGetAuthRequest, res: Response) 
     throw new ApiError(404, "category not found");
   }
 
-  const deleteCategory = await Category.findByIdAndDelete(category?._id, {
-    name,
-  });
+  const deleteCategory = await Category.findByIdAndDelete(category?._id, { name });
 
   return res
     .status(200)
@@ -77,8 +75,27 @@ const getAllCategory = asyncHandler(async (req: IGetAuthRequest, res: Response) 
     throw new ApiError(403, "ERROR: ACCESS DENIED");
   }
 
-  const category = await Category.find({});
+  const category = await Category.find({})
 
+  // const category = await Category.aggregate([
+  //   // Pipleline Stage 1
+  //   // * $facet : it's combine two or more pipeline in a single DB call
+  //   {
+  //     $facet: {
+  //       totalCount: [{ $count: "name" }],
+  //       categories: [{ $match: {} }]
+  //     }
+  //   }
+  // ])
+  /*
+    Doubt :
+    we can write also like this 
+    
+    .aggregate([
+        $match : {},  
+        $count : "name" 
+    ])
+  */
   if (!category) {
     throw new ApiError(404, "Category not found");
   }

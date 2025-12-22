@@ -7,10 +7,9 @@ const categorySchema = new Schema(
       trim: true,
       lowercase: true,
       unique: true,
-      required: [true,"Category name is required"],
+      required: [true, "Category name is required"]
     },
-  },
-  { timestamps: true },
+  }
 );
 
 export const Category = model("Category", categorySchema);
